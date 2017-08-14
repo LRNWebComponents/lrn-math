@@ -15,48 +15,39 @@ A LRN element
         display: block;
       }
     </style>
-    <content id="content"></content>
+    [[prefix]] <content id="content"></content> [[suffix]]
   </template>
 
   <script>
     Polymer({
-
       is: 'lrn-math',
-
+      // Define whether it should be block or inline.
       properties: {
-        title: {
+        prefix: {
           type: String,
-          value: 'lrn-math',
+          value: '$$'
         },
-        elReady: {
+        suffix: {
+          type: String,
+          value: '$$'
+        },
+        inline: {
           type: Boolean,
           value: false
         }
       },
-      _contentChanged: function (content) {
-        this.debounce(this._updatedMathjax(content), 5000);
-      },
-      _updatedMathjax: function (content) {
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-      },
-      debounce: function (func, wait, immediate) {
-        var timeout;
-        return function () {
-          var context = this, args = arguments;
-          var later = function () {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-          };
-          var callNow = immediate && !timeout;
-          clearTimeout(timeout);
-          timeout = setTimeout(later, wait);
-          if (callNow) func.apply(context, args);
-        };
+      observers: [
+        '_inlineChanged(inline)'
+      ],
+      _inlineChanged: function(inline) {
+        if (inline) {
+          this.prefix = '\\(';
+          this.suffix = '\\)';
+        }
       },
       ready: function () {
         this._observer =
           Polymer.dom(this.$.content).observeNodes(function (info) {
-            console.log(info);
             setTimeout(function() {
               MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
             }, 100);
