@@ -1,0 +1,97 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../lazy-imports/lazy-imports-behavior.html">
+
+<!--
+`lrn-math`
+A LRN element
+
+@demo demo/index.html
+-->
+
+<dom-module id="lrn-math">
+  <link rel="import" group="editor" href="../paper-input/paper-textarea.html">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+    </style>
+    [[prefix]] <slot id="content"></slot> [[suffix]]
+
+    <template is="dom-if" if="[[editor]]">
+      <paper-textarea value="{{_content}}"></paper-textarea>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lrn-math',
+      behaviors: [Polymer.LazyImportsBehavior],
+      // Define whether it should be block or inline.
+      properties: {
+        prefix: {
+          type: String,
+          value: '$$'
+        },
+        suffix: {
+          type: String,
+          value: '$$'
+        },
+        inline: {
+          type: Boolean,
+          value: false
+        },
+        editor: {
+          type: Boolean,
+          value: false
+        },
+        _content: {
+          type: String
+        }
+      },
+      observers: [
+        '_inlineChanged(inline)',
+        '_contentChanged(_content)',
+        '_editorChanged(editor)'
+      ],
+      _inlineChanged: function(inline) {
+        if (inline) {
+          this.prefix = '\\(';
+          this.suffix = '\\)';
+        }
+      },
+      _contentChanged: function (content) {
+        // update the content here
+      },
+      _editorChanged: function (editor, old) {
+        // see if the editor is active
+        if (editor) {
+          // dirty check
+          if (editor !== old) {
+            // lazy import the markdown editor
+            this.importLazyGroup('editor');
+          }
+        }
+      },
+      textareaChangeHandler: function (e) {
+        console.log(e);
+      },
+      ready: function () {
+        // document.body.appendChild(mathjaxConfig);
+        // load the cdn
+        var mathjaxCDN = document.createElement('script');
+        mathjaxCDN.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML';
+        document.body.appendChild(mathjaxCDN);
+
+        this._observer =
+          Polymer.dom(this.$.content).observeNodes((info) => {
+            this._content = info.addedNodes.map(node => node.textContent).toString();
+            setTimeout(function() {
+              MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+            }, 100);
+          });
+      }
+    });
+  </script>
+</dom-module>
