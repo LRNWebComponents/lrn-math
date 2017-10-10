@@ -4,7 +4,7 @@
   "main": "lrn-math.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
-    "lrn-markdown-editor": "LRNWebComponents/lrn-markdown-editor#^0.0.6"
+    "lazy-imports": "Polymer/lazy-imports#^2.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
