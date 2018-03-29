@@ -4,8 +4,7 @@
   "main": "lrn-math.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1",
-    "lazy-imports": "Polymer/lazy-imports#^2.0.0",
-    "paper-input": "PolymerElements/paper-input#^2.0.2"
+    "hax-body-behaviors": "LRNWebComponents/hax-body-behaviors#^1.6.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
