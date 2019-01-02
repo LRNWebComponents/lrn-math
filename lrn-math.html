@@ -148,19 +148,30 @@ A LRN element
        * so that we can render it to the page.
        */
       ready: function () {
-        if (typeof window.__mathJaxLoaded === typeof undefined) {
+        if (typeof window.MathJax === typeof undefined) {
           let mathjaxCDN = document.createElement('script');
           mathjaxCDN.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML';
           document.body.appendChild(mathjaxCDN);
-          window.__mathJaxLoaded = true;
         }
+        // If we do have access to MathJax then we need to do an initial
+        // render.
+        else {
+          this.render();
+        }
+        // Set up a children observer to re-render on each update.
         this._observer =
           Polymer.dom(this.$.content).observeNodes((info) => {
             this.math = info.addedNodes.map(node => node.textContent).toString();
-            setTimeout(function() {
-              MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-            }, 100);
+            this.render();
           });
+      },
+      /**
+       * Render method to re-apply MathJax
+       */
+      render: function () {
+        setTimeout(function () {
+          MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        }, 100);
       }
     });
   </script>
